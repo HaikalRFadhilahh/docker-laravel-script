@@ -1,5 +1,5 @@
 # Install Package Node Js
-FROM node:latest as node-build-nakula
+FROM node:latest as node-build
 
 # Setting Working Directory
 WORKDIR /var/www/html
@@ -51,13 +51,16 @@ WORKDIR /var/www/html
 RUN a2enmod rewrite
 
 # Copy Source Code
-COPY --from=node-build-nakula /var/www/html .
+COPY --from=node-build /var/www/html .
 
 # Copy Configuration
 COPY ./httpd/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Install Depencies
 RUN composer install
+
+# Optional Config Laravel
+RUN php artisan storage:link
 
 # Change User
 RUN chown -R www-data:www-data /var/www/html
